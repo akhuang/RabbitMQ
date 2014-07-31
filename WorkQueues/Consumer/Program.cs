@@ -17,10 +17,13 @@ namespace Consumer
             {
                 using (var channel = connection.CreateModel())
                 {
-                    channel.QueueDeclare("hello", false, false, false, null);
+                    var durable = true;
+                    channel.QueueDeclare("task_queue", durable, false, false, null);
+                    channel.BasicQos(0, 1, false);
 
                     var consumer = new QueueingBasicConsumer(channel);
-                    channel.BasicConsume("hello", true, consumer);
+                    channel.BasicConsume("task_queue", false, consumer);
+           
 
                     Console.WriteLine(" [*] Waiting for messages." +
                                              "To exit press CTRL+C");
@@ -33,9 +36,12 @@ namespace Consumer
                         Console.WriteLine(" [x] Received {0}", message);
 
                         int dots = message.Split(',').Length - 1;
-                        Thread.Sleep(dots * 1000);
+                        Console.WriteLine(dots);
+                        Thread.Sleep(dots * 10 * 1000);
 
                         Console.WriteLine(" [x] Done");
+
+                        channel.BasicAck(ea.DeliveryTag, false);
                     }
                 }
             }
