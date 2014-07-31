@@ -1,7 +1,7 @@
-/*.suo
+*.suo
 bin/
 obj/
-/*.user
+*.user
 _Resharper*
 .hgtags
 NuGet.exe
