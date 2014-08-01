@@ -5,20 +5,20 @@
    解决办法: Message acknowledgment(消息确认)
 
 
-      //第二个参数为:noAsk, 置为false表示需要worker回应Queue是否已经处理完消息
-      channel.BasicConsume("task_queue", false, consumer);
+        //第二个参数为:noAsk, 置为false表示需要worker回应Queue是否已经处理完消息
+        channel.BasicConsume("task_queue", false, consumer);
 
-      //执行完任务后调用下面代码告诉Queue消息已处理完毕 
-      channel.BasicAck(ea.DeliveryTag, false);
+        //执行完任务后调用下面代码告诉Queue消息已处理完毕 
+        channel.BasicAck(ea.DeliveryTag, false);
    
 2. 在第一点满足的情况下, 如何Queue服务端挂掉也会导致消息丢失
 
-      //标识quque是持久的
-      bool durable = true;
-      channel.QueueDeclare("task_queue", durable, false, false, null);
+        //标识quque是持久的
+        bool durable = true;
+        channel.QueueDeclare("task_queue", durable, false, false, null);
     
-      var properties = channel.CreateBasicProperties(); 
-      properties.SetPersistent(true); //持久化
+        var properties = channel.CreateBasicProperties(); 
+        properties.SetPersistent(true); //持久化
     
 3. Round-robin dispatching(循环调度): 
 
@@ -28,6 +28,6 @@
    
    //在调用QueueingBasicConsumer之前设置channel的BasciQos, 第二个参数:prefetchcount=1,即worker只能处理一条message, 在处理完前不允许再给它分配消息
    
-      channel.BasicQos(0, 1, false);
-      var consumer = new QueueingBasicConsumer(channel);
+        channel.BasicQos(0, 1, false);
+        var consumer = new QueueingBasicConsumer(channel);
    
